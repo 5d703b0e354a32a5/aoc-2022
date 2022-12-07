@@ -84,7 +84,7 @@ defmodule AOC2022.Day07 do
   def get_directory_sizes(fs) do
     dirs =
       fs
-      |> Enum.filter(fn {name, meta} -> meta.type == :dir end)
+      |> Enum.filter(fn {_name, meta} -> meta.type == :dir end)
 
     current = Enum.map(dirs, fn {name, meta} -> {name, meta.size} end)
 

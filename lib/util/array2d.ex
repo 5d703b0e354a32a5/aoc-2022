@@ -56,4 +56,45 @@ defmodule Array2D do
       end
     )
   end
+
+  def merge(left, right, fun) do
+    for i <- 1..rows(left), j <- 1..cols(left) do
+      {i, j}
+    end
+    |> Enum.reduce(
+      Array2D.new(rows(left), rows(left)),
+      fn {i, j}, acc ->
+        Array2D.put(
+          acc,
+          i,
+          j,
+          fun.(
+            get(left, i, j),
+            get(right, i, j)
+          )
+        )
+      end
+    )
+  end
+
+  def product(left, right) do
+    n = rows(left)
+    m = cols(left)
+    l = cols(right)
+
+    for i <- 1..n, j <- 1..l do
+      {i, j}
+    end
+    |> Enum.reduce(
+      Array2D.new(n, l),
+      fn {i, j}, acc ->
+        entry =
+          for k <- 1..m, reduce: 0 do
+            acc -> acc + Array2D.get(left, i, k) * Array2D.get(right, k, j)
+          end
+
+        Array2D.put(acc, i, j, entry)
+      end
+    )
+  end
 end

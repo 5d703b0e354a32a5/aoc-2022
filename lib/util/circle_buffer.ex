@@ -6,11 +6,13 @@ defmodule CircleBuffer do
       items
       |> Enum.to_list()
       |> List.to_tuple()
+
     size = tuple_size(items)
+
     %CircleBuffer{
       i: 0,
       size: size,
-      items: items,
+      items: items
     }
   end
 

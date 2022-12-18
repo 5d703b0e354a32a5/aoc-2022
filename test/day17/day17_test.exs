@@ -13,6 +13,6 @@ defmodule AOC2022.Day17Test do
   end
 
   test "Part 2", test_data do
-    assert AOC2022.Day17.part2(test_data[:test1]) == 1514285714288
+    assert AOC2022.Day17.part2(test_data[:test1]) == 1_514_285_714_288
   end
 end

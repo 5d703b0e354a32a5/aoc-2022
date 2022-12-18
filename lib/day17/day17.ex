@@ -17,7 +17,7 @@ defmodule AOC2022.Day17 do
 
   def new_rock(0, height) do
     # ####
-    [{0,0}, {1,0}, {2,0}, {3,0}]
+    [{0, 0}, {1, 0}, {2, 0}, {3, 0}]
     |> translate_rock({2, 0})
     |> translate_rock({0, height + 3})
   end
@@ -26,7 +26,7 @@ defmodule AOC2022.Day17 do
     # .#.
     # ###
     # .#.
-    [{1,0}, {0,1}, {1,1}, {2,1}, {1, 2}]
+    [{1, 0}, {0, 1}, {1, 1}, {2, 1}, {1, 2}]
     |> translate_rock({2, 0})
     |> translate_rock({0, height + 3})
   end
@@ -35,7 +35,7 @@ defmodule AOC2022.Day17 do
     # ..#
     # ..#
     # ###
-    [{0,0}, {1,0}, {2,0}, {2,1}, {2, 2}]
+    [{0, 0}, {1, 0}, {2, 0}, {2, 1}, {2, 2}]
     |> translate_rock({2, 0})
     |> translate_rock({0, height + 3})
   end
@@ -45,7 +45,7 @@ defmodule AOC2022.Day17 do
     # #
     # #
     # #
-    [{0,0}, {0,1}, {0,2}, {0,3}]
+    [{0, 0}, {0, 1}, {0, 2}, {0, 3}]
     |> translate_rock({2, 0})
     |> translate_rock({0, height + 3})
   end
@@ -53,18 +53,18 @@ defmodule AOC2022.Day17 do
   def new_rock(4, height) do
     # ##
     # ##
-    [{0,0}, {1,0}, {0,1}, {1,1}]
+    [{0, 0}, {1, 0}, {0, 1}, {1, 1}]
     |> translate_rock({2, 0})
     |> translate_rock({0, height + 3})
   end
 
   def update_state(state, i) do
     rock = new_rock(rem(i - 1, 5), state.height)
-    drop_rock(state, rock) 
+    drop_rock(state, rock)
   end
 
   def drop_rock(state, rock) do
-    #draw(state, rock)
+    # draw(state, rock)
     {push, pushes} = CircleBuffer.next(state.pushes)
     state = Map.replace!(state, :pushes, pushes)
     rock = push_rock(rock, push, state.blocked)
@@ -72,17 +72,21 @@ defmodule AOC2022.Day17 do
     case fall_rock(rock, state.blocked) do
       {:stop, rock} ->
         add_rock(state, rock)
+
       {:cont, rock} ->
         drop_rock(state, rock)
     end
   end
 
   def push_rock(rock, push, blocked) do
-    offset = case push do
-      :left -> {-1, 0}
-      :right -> {1, 0}
-    end
+    offset =
+      case push do
+        :left -> {-1, 0}
+        :right -> {1, 0}
+      end
+
     new_rock = translate_rock(rock, offset)
+
     if valid_rock?(new_rock, blocked) do
       new_rock
     else
@@ -93,6 +97,7 @@ defmodule AOC2022.Day17 do
   def fall_rock(rock, blocked) do
     offset = {0, -1}
     new_rock = translate_rock(rock, offset)
+
     if valid_rock?(new_rock, blocked) do
       {:cont, new_rock}
     else
@@ -110,7 +115,7 @@ defmodule AOC2022.Day17 do
   def valid_rock?(rock, blocked) do
     Enum.all?(
       rock,
-      &(valid_point?(&1, blocked))
+      &valid_point?(&1, blocked)
     )
   end
 
@@ -120,11 +125,11 @@ defmodule AOC2022.Day17 do
   end
 
   def add_rock(state, rock) do
-    {_, rock_top} = Enum.max_by(rock, &(elem(&1, 1)))
+    {_, rock_top} = Enum.max_by(rock, &elem(&1, 1))
 
     state
-    |> Map.update!(:height, &(max(&1, rock_top + 1)))
-    |> Map.update!(:blocked, &(MapSet.union(&1, MapSet.new(rock))))
+    |> Map.update!(:height, &max(&1, rock_top + 1))
+    |> Map.update!(:blocked, &MapSet.union(&1, MapSet.new(rock)))
     |> Map.put(:maxes, update_maxes(state.maxes, rock))
   end
 
@@ -153,7 +158,7 @@ defmodule AOC2022.Day17 do
       height: 0,
       blocked: blocked,
       pushes: pushes,
-      maxes: maxes,
+      maxes: maxes
     }
   end
 
@@ -167,18 +172,17 @@ defmodule AOC2022.Day17 do
 
   defp do_simulate(state, cycles, i, acc) do
     key = get_key(state, i)
+
     case Map.fetch(acc, key) do
       {:ok, {prev_i, prev_height}} ->
         cycle_length = i - prev_i
         full_cycles = div(cycles - (i - 1), cycle_length)
         height_delta = state.height - prev_height
-        
+
         extra_height = full_cycles * height_delta
 
-        extra_height + do_simulate(state, cycles,
-          i + full_cycles * cycle_length,
-          Map.new()
-        )
+        extra_height + do_simulate(state, cycles, i + full_cycles * cycle_length, Map.new())
+
       :error ->
         do_simulate(
           update_state(state, i),
@@ -195,7 +199,7 @@ defmodule AOC2022.Day17 do
         state.height - Map.get(state.maxes, x)
       end
 
-    [ rem(i - 1, 5) | [ state.pushes.i | profile ] ]
+    [rem(i - 1, 5) | [state.pushes.i | profile]]
   end
 
   def part1(pushes) do
@@ -203,7 +207,7 @@ defmodule AOC2022.Day17 do
   end
 
   def part2(pushes) do
-    simulate( pushes, 1000000000000)
+    simulate(pushes, 1_000_000_000_000)
   end
 
   def main() do

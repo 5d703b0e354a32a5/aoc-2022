@@ -7,8 +7,7 @@ defmodule Graph do
         2..n,
         %{0 => Array2D.new(n, n, 0), 1 => adjacency_matrix},
         fn i, acc ->
-          prev =
-            Map.get(acc, i - 1)
+          prev = Map.get(acc, i - 1)
 
           Map.put(
             acc,

@@ -46,6 +46,7 @@ defmodule AOC2022.Day16 do
       for source_label <- labels do
         source_valve = Map.get(valves, source_label)
         targets = source_valve.tunnels_to
+
         for target_label <- labels do
           if MapSet.member?(targets, target_label) do
             1
@@ -75,31 +76,32 @@ defmodule AOC2022.Day16 do
     if MapSet.size(state.remaining) == 0 do
       [state]
     else
-      [state |
-        Enum.flat_map(
-          state.remaining,
-          fn next ->
-            valve = Map.get(valves, next)
-            distance = Map.get(distances, {state.current, next})
-            minutes_remaining = state.minutes_remaining - (distance + 1)
-            total = state.total + valve.flow_rate * minutes_remaining
+      [
+        state
+        | Enum.flat_map(
+            state.remaining,
+            fn next ->
+              valve = Map.get(valves, next)
+              distance = Map.get(distances, {state.current, next})
+              minutes_remaining = state.minutes_remaining - (distance + 1)
+              total = state.total + valve.flow_rate * minutes_remaining
 
-            if minutes_remaining > 0 do
-              calculate_flows(
-                state
-                |> Map.update!(:remaining, &(MapSet.delete(&1, next)))
-                |> Map.update!(:opened, &(MapSet.put(&1, next)))
-                |> Map.replace!(:minutes_remaining, minutes_remaining)
-                |> Map.replace!(:total, total)
-                |> Map.replace!(:current, next),
-                valves,
-                distances
-              )
-            else
-              [state]
+              if minutes_remaining > 0 do
+                calculate_flows(
+                  state
+                  |> Map.update!(:remaining, &MapSet.delete(&1, next))
+                  |> Map.update!(:opened, &MapSet.put(&1, next))
+                  |> Map.replace!(:minutes_remaining, minutes_remaining)
+                  |> Map.replace!(:total, total)
+                  |> Map.replace!(:current, next),
+                  valves,
+                  distances
+                )
+              else
+                [state]
+              end
             end
-          end
-        )
+          )
       ]
     end
   end
@@ -118,11 +120,11 @@ defmodule AOC2022.Day16 do
       minutes_remaining: 30,
       total: 0,
       remaining: remaining,
-      opened: MapSet.new(),
+      opened: MapSet.new()
     }
 
     calculate_flows(state, valves, distances)
-    |> Enum.map(&(&1.total))
+    |> Enum.map(& &1.total)
     |> Enum.max()
   end
 
@@ -140,14 +142,14 @@ defmodule AOC2022.Day16 do
       minutes_remaining: 26,
       total: 0,
       remaining: remaining,
-      opened: MapSet.new(),
+      opened: MapSet.new()
     }
 
     results =
       calculate_flows(state, valves, distances)
       |> Enum.group_by(
-        &(&1.opened),
-        &(&1.total)
+        & &1.opened,
+        & &1.total
       )
       |> Enum.map(fn {opened, totals} -> {Enum.max(totals), opened} end)
 
@@ -156,7 +158,7 @@ defmodule AOC2022.Day16 do
         results
         |> Enum.uniq()
         |> Stream.filter(fn {_, opened_right} -> MapSet.disjoint?(opened_left, opened_right) end)
-        |> Stream.map(&(elem(&1, 0)))
+        |> Stream.map(&elem(&1, 0))
         |> Enum.to_list()
 
       if right == [] do

@@ -1,26 +1,77 @@
 defmodule Vector do
-  def add({x1, y1}, {x2, y2}) do
-    {x1 + x2, y1 + y2}
+  def new(n, default \\ nil) do
+    for _ <- 1..n do
+      default
+    end
+    |> List.to_tuple()
   end
 
-  def subtract({x1, y1}, {x2, y2}) do
-    {x1 - x2, y1 - y2}
+  def size(v) do
+    tuple_size(v)
   end
 
-  def scale({x1, y1}, s) do
-    {s * x1, s * y1}
+  def get(v, i) do
+    elem(v, i - 1)
+  end
+
+  def put(v, i, item) do
+    put_elem(v, i - 1, item)
+  end
+
+  def add(v1, v2) do
+    n = size(v1)
+
+    Enum.reduce(
+      1..n,
+      new(n),
+      fn i, result ->
+        put(result, i, get(v1, i) + get(v2, i))
+      end
+    )
+  end
+
+  def subtract(v1, v2) do
+    n = size(v1)
+
+    Enum.reduce(
+      1..n,
+      new(n),
+      fn i, result ->
+        put(result, i, get(v1, i) - get(v2, i))
+      end
+    )
+  end
+
+  def scale(v, s) do
+    n = size(v)
+
+    Enum.reduce(
+      1..n,
+      new(n),
+      fn i, result ->
+        put(result, i, s * get(v, i))
+      end
+    )
   end
 
   def norm(v) do
     :math.sqrt(Vector.dot(v, v))
   end
 
-  def normalize(v = {x1, y1}) do
+  def normalize(v) do
     n = norm(v)
-    {x1 / n, y1 / n}
+    scale(v, 1 / n)
   end
 
-  def dot({x1, y1}, {x2, y2}) do
-    x1 * x2 + y1 * y2
+  def dot(v1, v2) do
+    n = size(v1)
+
+    Enum.reduce(
+      1..n,
+      0,
+      fn i, result ->
+        result + get(v1, i) * get(v2, i)
+      end
+    )
   end
 end

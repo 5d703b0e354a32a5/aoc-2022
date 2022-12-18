@@ -134,7 +134,6 @@ defmodule AOC2022.Day11 do
         |> Tuple.to_list()
         |> Enum.map(& &1.modulus)
         |> Enum.reduce(1, &(&1 * &2))
-        |> IO.inspect()
       end
 
     counts = for(_ <- 1..tuple_size(monkeys), do: 0) |> List.to_tuple()

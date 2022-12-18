@@ -15,7 +15,7 @@ defmodule AOC2022.Day18 do
     {y, ""} = Integer.parse(y)
     {z, ""} = Integer.parse(z)
 
-    Vector3D.scale({x, y, z}, 2)
+    Vector.scale({x, y, z}, 2)
   end
 
   def get_side_face_points(center) do
@@ -44,7 +44,7 @@ defmodule AOC2022.Day18 do
     |> Enum.reduce(
       MapSet.new(),
       fn delta, acc ->
-        p = Vector3D.add(center, delta)
+        p = Vector.add(center, delta)
         MapSet.put(acc, {p, delta})
       end
     )
@@ -101,7 +101,7 @@ defmodule AOC2022.Day18 do
   def point_candidates(point, orientation) do
     point_candidates_offsets(orientation)
     |> Enum.map(fn offsets ->
-      Enum.map(offsets, fn offset -> Vector3D.add(point, offset) end)
+      Enum.map(offsets, fn offset -> Vector.add(point, offset) end)
     end)
   end
 

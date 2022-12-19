@@ -15,6 +15,12 @@ defmodule Array2D do
     |> List.to_tuple()
   end
 
+  def to_list(array) do
+    array
+    |> Tuple.to_list()
+    |> Enum.map(&Tuple.to_list/1)
+  end
+
   defp index(i) do
     i - 1
   end
@@ -96,5 +102,14 @@ defmodule Array2D do
         Array2D.put(acc, i, j, entry)
       end
     )
+  end
+
+  def transpose(array) do
+    for j <- 1..cols(array) do
+      for i <- 1..rows(array) do
+        get(array, i, j)
+      end
+    end
+    |> from_list()
   end
 end

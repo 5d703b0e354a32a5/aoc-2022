@@ -6,6 +6,11 @@ defmodule Vector do
     |> List.to_tuple()
   end
 
+  def from_list(list) when is_list(list) do
+    list
+    |> List.to_tuple()
+  end
+
   def size(v) do
     tuple_size(v)
   end
@@ -73,5 +78,11 @@ defmodule Vector do
         result + get(v1, i) * get(v2, i)
       end
     )
+  end
+
+  def all?(v, pred) do
+    v
+    |> Tuple.to_list()
+    |> Enum.all?(pred)
   end
 end

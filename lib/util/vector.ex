@@ -85,4 +85,13 @@ defmodule Vector do
     |> Tuple.to_list()
     |> Enum.all?(pred)
   end
+
+  def transform(v, matrix) do
+    for i <- 1..Array2D.rows(matrix) do
+      for j <- 1..size(v), reduce: 0 do
+        acc -> acc + Array2D.get(matrix, i, j) * get(v, j)
+      end
+    end
+    |> Kernel.then(&from_list/1)
+  end
 end
